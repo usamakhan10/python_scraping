@@ -1,4 +1,5 @@
 import scrapy
+from MyFirstProject.items import MyfirstprojectItem
 
 
 class SecondscraperSpider(scrapy.Spider):
@@ -30,19 +31,21 @@ class SecondscraperSpider(scrapy.Spider):
     def individual_book_scraping(self, response):
         book = response.css("div.product_main")[0]
         table_rows = response.css("table tr")
-        yield {
-            'url': response.url,
-            'title': book.css("h1 ::text").get(),
-            'upc': table_rows[0].css("td ::text").get(),
-            'product_type': table_rows[1].css("td ::text").get(),
-            'price_excl_tax': table_rows[2].css("td ::text").get(),
-            'price_incl_tax': table_rows[3].css("td ::text").get(),
-            'tax': table_rows[4].css("td ::text").get(),
-            'availability': table_rows[5].css("td ::text").get(),
-            'num_reviews': table_rows[6].css("td ::text").get(),
-            'stars': book.css("p.star-rating").attrib['class'],
-            'category': book.xpath("//ul[@class='breadcrumb']/li[@class='active']/preceding-sibling::li[1]/a/text()").get(),
-            'description': book.xpath("//div[@id='product_description']/following-sibling::p/text()").get(),
-            'price': book.css('p.price_color ::text').get(),
-        }
+        item_obj = MyfirstprojectItem()
+        
+        item_obj['url'] = response.url
+        item_obj['title'] = book.css("h1 ::text").get()
+        item_obj['upc'] = table_rows[0].css("td ::text").get()
+        item_obj['product_type'] = table_rows[1].css("td ::text").get()
+        item_obj['price_excl_tax'] = table_rows[2].css("td ::text").get()
+        item_obj['price_incl_tax'] = table_rows[3].css("td ::text").get()
+        item_obj['tax'] = table_rows[4].css("td ::text").get()
+        item_obj['availability'] = table_rows[5].css("td ::text").get()
+        item_obj['num_reviews'] = table_rows[6].css("td ::text").get()
+        item_obj['stars'] = book.css("p.star-rating").attrib['class']
+        item_obj['category'] = book.xpath("//ul[@class='breadcrumb']/li[@class='active']/preceding-sibling::li[1]/a/text()").get()
+        item_obj['description'] = book.xpath("//div[@id='product_description']/following-sibling::p/text()").get()
+        item_obj['price'] = book.css('p.price_color ::text').get()
+
+        yield item_obj
 
